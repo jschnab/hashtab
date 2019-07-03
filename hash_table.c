@@ -19,6 +19,10 @@ static ht_item HT_DELETED_ITEM = {NULL, NULL};
 // create a new item
 static ht_item *ht_new_item(const char *k, const char *v) {
     ht_item *i = malloc(sizeof(ht_item));
+    if (i == NULL) {
+        printf("Memory allocation error.\n");
+        exit(1);
+    }
     i->key = strdup(k);
     i->value = strdup(v);
     return i;
@@ -31,35 +35,29 @@ static void ht_del_item(ht_item *i) {
     free(i);
 }
 
-/* create a new hash table at a particular size
+// create a new hash table at a particular size
 static ht_hash_table *ht_new_sized(const int base_size) {
     ht_hash_table *ht = malloc(sizeof(ht_hash_table));
+    if (ht == NULL) {
+        printf("Memory allocation error\n");
+        exit(1);
+    }
     ht->size = base_size;
 
     ht->size = next_prime(ht->size);
 
     ht->count = 0;
     ht->items = calloc((size_t)ht->size, sizeof(ht_item*));
+    if (ht->items == NULL) {
+        printf("Memory allocation error\n");
+        exit(1);
+    }
     return ht;
 }
-*/
-//
-static ht_hash_table *ht_new_sized(const int size_index) {
-    ht_hash_table *ht = malloc(sizeof(ht_hash_table));
-    ht->size_index = size_index;
-
-    const int base_size = 50 << ht->size_index;
-    ht->size = next_prime(base_size);
-
-    ht->count = 0;
-    ht->items = calloc((size_t)ht->size, sizeof(ht_item*));
-    return ht;
-}
-//
 
 // create a new hash table
 ht_hash_table *ht_new() {
-    return ht_new_sized(0);
+    return ht_new_sized(HT_INITIAL_BASE_SIZE);
 }
 
 // delete a hash table
